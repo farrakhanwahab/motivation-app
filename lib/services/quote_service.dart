@@ -20,4 +20,4 @@ class QuoteService {
       throw Exception('Failed to fetch quote: ${response.body}');
     }
   }
-} 
+}
