@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
 import 'widgets/quote_card.dart';
-import 'screens/preferences_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'services/ai_quote_service.dart';
+import 'screens/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -133,15 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _openPreferences() async {
+  void _openSettings() async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PreferencesScreen(
-          initialTopics: selectedTopics,
-          initialMood: selectedMood,
-          initialTime: preferredTime,
-        ),
+        builder: (context) => const SettingsScreen(),
       ),
     );
     if (result != null && result is Map) {
@@ -152,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       await _savePreferences();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Preferences updated!')),
+        const SnackBar(content: Text('Settings updated!')),
       );
     }
   }
@@ -167,8 +163,8 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: _openPreferences,
-            tooltip: 'Preferences',
+            onPressed: _openSettings,
+            tooltip: 'Settings',
           ),
         ],
       ),
