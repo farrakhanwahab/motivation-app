@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -93,6 +94,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _savePassword,
+                  style: Theme.of(context).brightness == Brightness.dark
+                      ? AppTheme.iosButtonStyleDark
+                      : AppTheme.iosButtonStyle,
                   child: const Text('Save'),
                 ),
               ),

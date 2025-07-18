@@ -7,6 +7,7 @@ import 'about_page.dart';
 import 'change_password_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import '../main.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -18,11 +19,13 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String name = 'User Name';
   String? avatarPath;
+  ThemeMode themeMode = ThemeMode.system;
 
   @override
   void initState() {
     super.initState();
     _loadProfile();
+    _loadTheme();
   }
 
   Future<void> _loadProfile() async {
@@ -31,6 +34,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       name = prefs.getString('profile_name') ?? name;
       avatarPath = prefs.getString('profile_avatar');
     });
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      themeMode = ThemeNotifier.stringToThemeMode(prefs.getString('theme_mode'));
+    });
+  }
+
+  void _onThemeChanged(ThemeMode? mode) async {
+    if (mode == null) return;
+    setState(() {
+      themeMode = mode;
+    });
+    await themeNotifier.setThemeMode(mode);
   }
 
   Future<void> _goToProfile() async {
@@ -102,6 +120,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Padding(
                     padding: EdgeInsets.fromLTRB(24, 24, 24, 8),
                     child: Text('App', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.brightness_6),
+                    title: const Text('Theme'),
+                    trailing: SizedBox(
+                      width: 120,
+                      child: DropdownButton<ThemeMode>(
+                        value: themeMode,
+                        items: const [
+                          DropdownMenuItem(
+                            value: ThemeMode.system,
+                            child: Text('System'),
+                          ),
+                          DropdownMenuItem(
+                            value: ThemeMode.light,
+                            child: Text('Light'),
+                          ),
+                          DropdownMenuItem(
+                            value: ThemeMode.dark,
+                            child: Text('Dark'),
+                          ),
+                        ],
+                        onChanged: _onThemeChanged,
+                        isExpanded: true,
+                      ),
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.info_outline),

@@ -29,36 +29,62 @@ class _TimePageState extends State<TimePage> {
       builder: (context) {
         DateTime tempPicked = initialDateTime;
         return SafeArea(
-          child: Container(
-            height: 270,
-            color: Colors.white,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: 200,
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.time,
-                    initialDateTime: initialDateTime,
-                    use24hFormat: false,
-                    onDateTimeChanged: (DateTime newDateTime) {
-                      tempPicked = newDateTime;
-                    },
-                  ),
+          child: Builder(
+            builder: (context) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              return Container(
+                height: 270,
+                color: isDark ? Colors.black : Colors.white,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 200,
+                      child: CupertinoTheme(
+                        data: CupertinoThemeData(
+                          brightness: isDark ? Brightness.dark : Brightness.light,
+                          textTheme: CupertinoTextThemeData(
+                            dateTimePickerTextStyle: TextStyle(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontFamily: 'Montserrat',
+                              fontSize: 22,
+                            ),
+                          ),
+                        ),
+                        child: CupertinoDatePicker(
+                          mode: CupertinoDatePickerMode.time,
+                          initialDateTime: initialDateTime,
+                          use24hFormat: false,
+                          onDateTimeChanged: (DateTime newDateTime) {
+                            tempPicked = newDateTime;
+                          },
+                        ),
+                      ),
+                    ),
+                    CupertinoButton(
+                      child: Text(
+                        'Set Time',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: isDark ? Colors.black : Colors.white,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          selectedTime = TimeOfDay(hour: tempPicked.hour, minute: tempPicked.minute);
+                        });
+                        Navigator.pop(context);
+                      },
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ],
                 ),
-                CupertinoButton(
-                  child: const Text('Set Time', style: TextStyle(fontFamily: 'Montserrat')),
-                  onPressed: () {
-                    setState(() {
-                      selectedTime = TimeOfDay(hour: tempPicked.hour, minute: tempPicked.minute);
-                    });
-                    Navigator.pop(context);
-                  },
-                  color: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         );
       },
@@ -93,16 +119,35 @@ class _TimePageState extends State<TimePage> {
                       height: 44,
                       child: ElevatedButton(
                         onPressed: _showCupertinoTimePicker,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600, fontSize: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          elevation: 0,
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.zero,
+                        style: Theme.of(context).brightness == Brightness.dark
+                            ? ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                textStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600, fontSize: 14),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                elevation: 0,
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.zero,
+                              )
+                            : ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor: Colors.white,
+                                textStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600, fontSize: 14),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                elevation: 0,
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.zero,
+                              ),
+                        child: Text(
+                          'Change Time',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            height: 1.2,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+                          ),
                         ),
-                        child: const Text('Change Time', style: TextStyle(fontFamily: 'Montserrat', fontSize: 14, fontWeight: FontWeight.w600, height: 1.2)),
                       ),
                     ),
                   ],
@@ -118,7 +163,15 @@ class _TimePageState extends State<TimePage> {
                     final time = selectedTime ?? const TimeOfDay(hour: 6, minute: 0);
                     Navigator.pop(context, {'time': '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}' });
                   },
-                  style: AppTheme.iosButtonStyle,
+                  style: Theme.of(context).brightness == Brightness.dark
+                      ? ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          textStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600, fontSize: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          elevation: 0,
+                        )
+                      : AppTheme.iosButtonStyle,
                   child: const Text('Save', style: TextStyle(fontFamily: 'Montserrat')),
                 ),
               ),

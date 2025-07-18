@@ -12,14 +12,18 @@ class QuoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? Colors.grey[900] : Colors.grey[100];
+    final textColor = isDark ? Colors.white : Colors.black;
+    final authorColor = isDark ? Colors.white70 : Colors.grey[700];
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: bgColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -34,6 +38,7 @@ class QuoteCard extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: 20,
+                  color: textColor,
                 ),
             textAlign: TextAlign.center,
           ),
@@ -43,7 +48,7 @@ class QuoteCard extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w400,
                   fontStyle: FontStyle.italic,
-                  color: Colors.grey[700],
+                  color: authorColor,
                 ),
             textAlign: TextAlign.right,
           ),

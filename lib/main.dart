@@ -7,9 +7,51 @@ import 'services/ai_quote_service.dart';
 import 'screens/settings_screen.dart';
 import 'dart:io';
 
+class ThemeNotifier extends ValueNotifier<ThemeMode> {
+  ThemeNotifier(ThemeMode value) : super(value);
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    value = mode;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('theme_mode', _themeModeToString(mode));
+  }
+
+  static String _themeModeToString(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return 'light';
+      case ThemeMode.dark:
+        return 'dark';
+      case ThemeMode.system:
+      default:
+        return 'system';
+    }
+  }
+
+  static ThemeMode stringToThemeMode(String? s) {
+    switch (s) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      case 'system':
+      default:
+        return ThemeMode.system;
+    }
+  }
+
+  static Future<ThemeMode> loadThemeMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return stringToThemeMode(prefs.getString('theme_mode'));
+  }
+}
+
+late final ThemeNotifier themeNotifier;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
+  themeNotifier = ThemeNotifier(await ThemeNotifier.loadThemeMode());
   runApp(const MotivationAIApp());
 }
 
@@ -18,11 +60,18 @@ class MotivationAIApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Motivation AI',
-      theme: AppTheme.lightTheme,
-      home: const HomeScreen(),
-      debugShowCheckedModeBanner: false,
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (context, mode, _) {
+        return MaterialApp(
+          title: 'Motivation AI',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: mode,
+          home: const HomeScreen(),
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
@@ -212,7 +261,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: isLoading ? null : _getNewQuote,
-                  style: AppTheme.iosButtonStyle,
+                  style: Theme.of(context).brightness == Brightness.dark
+                      ? AppTheme.iosButtonStyleDark
+                      : AppTheme.iosButtonStyle,
                   child: const Text('New Quote'),
                 ),
               ),

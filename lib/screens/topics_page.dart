@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class TopicsPage extends StatefulWidget {
   const TopicsPage({super.key});
@@ -90,13 +91,9 @@ class _TopicsPageState extends State<TopicsPage> {
                   onPressed: () {
                     Navigator.pop(context, {'topics': selectedTopics.toList()});
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600, fontSize: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    elevation: 0,
-                  ),
+                  style: Theme.of(context).brightness == Brightness.dark
+                      ? AppTheme.iosButtonStyleDark
+                      : AppTheme.iosButtonStyle,
                   child: const Text('Save'),
                 ),
               ),

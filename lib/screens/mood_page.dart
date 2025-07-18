@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class MoodPage extends StatefulWidget {
   const MoodPage({super.key});
@@ -76,13 +77,9 @@ class _MoodPageState extends State<MoodPage> {
                   onPressed: () {
                     Navigator.pop(context, {'mood': selectedMood});
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600, fontSize: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    elevation: 0,
-                  ),
+                  style: Theme.of(context).brightness == Brightness.dark
+                      ? AppTheme.iosButtonStyleDark
+                      : AppTheme.iosButtonStyle,
                   child: const Text('Save'),
                 ),
               ),
