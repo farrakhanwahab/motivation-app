@@ -3,7 +3,7 @@ import 'theme/app_theme.dart';
 import 'widgets/quote_card.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'services/ai_quote_service.dart';
+import 'services/quote_service.dart';
 import 'screens/settings_screen.dart';
 import 'dart:io';
 
@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
       quote = prefs.getString('last_quote') ?? quote;
       author = prefs.getString('last_author') ?? author;
       lastQuoteDate = prefs.getString('last_quote_date') != null ? DateTime.tryParse(prefs.getString('last_quote_date')!) : null;
-      preferredTime = prefs.getString('preferred_time');
+      preferredTime = prefs.getString('preferred_time') ?? '06:00';
       selectedTopics = prefs.getStringList('selected_topics') ?? [];
       selectedMood = prefs.getString('selected_mood') ?? 'Any';
     });
@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool _canGetQuoteNow() {
-    if (preferredTime == null) return false;
+    if (preferredTime == null || (preferredTime?.isEmpty ?? true)) return false;
     final now = TimeOfDay.now();
     final parts = preferredTime!.split(":");
     if (parts.length != 2) return false;
@@ -164,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!_canGetQuoteNow()) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(preferredTime == null
-            ? 'Please set your preferred time in Preferences.'
+            ? 'Please set your preferred time in Settings.'
             : 'You can only get a new quote once per day at your chosen time.')),
       );
       return;
@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = true;
     });
     try {
-      final result = await AIQuoteService.fetchQuote(topics: selectedTopics, mood: selectedMood);
+      final result = await QuoteService.fetchQuote(topics: selectedTopics, mood: selectedMood);
       setState(() {
         quote = result['quote'] ?? '';
         author = result['author'] ?? '';
