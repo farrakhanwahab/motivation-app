@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -8,15 +11,49 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String name = 'User Name';
+  final TextEditingController nameController = TextEditingController();
   String email = 'user@email.com';
   String? avatarPath;
 
-  void _pickAvatar() async {
-    // Placeholder: Implement image picker logic here
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadProfile() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      avatarPath = avatarPath == null ? 'assets/avatar_placeholder.png' : null;
+      nameController.text = prefs.getString('profile_name') ?? 'User Name';
+      email = prefs.getString('profile_email') ?? email;
+      avatarPath = prefs.getString('profile_avatar');
     });
+  }
+
+  Future<void> _pickAvatar() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    if (picked != null) {
+      setState(() {
+        avatarPath = picked.path;
+      });
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('profile_name', nameController.text);
+    await prefs.setString('profile_email', email);
+    if (avatarPath != null) {
+      await prefs.setString('profile_avatar', avatarPath!);
+    }
+    Navigator.pop(context, {'name': nameController.text, 'avatar': avatarPath});
   }
 
   @override
@@ -31,23 +68,68 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.all(24),
                 children: [
                   Center(
-                    child: GestureDetector(
-                      onTap: _pickAvatar,
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundImage: avatarPath != null ? AssetImage(avatarPath!) : null,
-                        child: avatarPath == null ? Text(name.isNotEmpty ? name[0] : '?', style: const TextStyle(fontSize: 32)) : null,
-                      ),
+                    child: Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        GestureDetector(
+                          onTap: _pickAvatar,
+                          child: CircleAvatar(
+                            radius: 48,
+                            backgroundImage: avatarPath != null ? FileImage(File(avatarPath!)) : null,
+                            backgroundColor: Colors.grey[200],
+                            child: avatarPath == null
+                                ? Text(
+                                    nameController.text.isNotEmpty ? nameController.text[0] : '?',
+                                    style: const TextStyle(fontSize: 40, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black),
+                                  )
+                                : null,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 4,
+                          right: 4,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            child: const Icon(Icons.edit, color: Colors.white, size: 18),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  TextField(
-                    controller: TextEditingController(text: name),
-                    decoration: const InputDecoration(labelText: 'Name'),
-                    onChanged: (val) => setState(() => name = val),
+                  const SizedBox(height: 12),
+                  const Center(
+                    child: Text(
+                      'Tap avatar to change photo.',
+                      style: TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Montserrat'),
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(email, style: const TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 32),
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                      labelStyle: TextStyle(fontFamily: 'Montserrat'),
+                    ),
+                    style: const TextStyle(fontFamily: 'Montserrat', fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: TextEditingController(text: email),
+                    enabled: false,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(fontFamily: 'Montserrat'),
+                      disabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                    ),
+                    style: const TextStyle(fontFamily: 'Montserrat', color: Colors.grey, fontSize: 16),
+                  ),
                 ],
               ),
             ),
@@ -56,9 +138,14 @@ class _ProfilePageState extends State<ProfilePage> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, {'name': name, 'avatar': avatarPath});
-                  },
+                  onPressed: _saveProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600, fontSize: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
+                  ),
                   child: const Text('Save'),
                 ),
               ),

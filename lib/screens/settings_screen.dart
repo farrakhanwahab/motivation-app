@@ -5,9 +5,38 @@ import 'mood_page.dart';
 import 'time_page.dart';
 import 'about_page.dart';
 import 'change_password_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String name = 'User Name';
+  String? avatarPath;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      name = prefs.getString('profile_name') ?? name;
+      avatarPath = prefs.getString('profile_avatar');
+    });
+  }
+
+  Future<void> _goToProfile() async {
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfilePage()));
+    await _loadProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +57,23 @@ class SettingsScreen extends StatelessWidget {
                     child: Text('Profile', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                   ),
                   ListTile(
-                    leading: const CircleAvatar(child: Icon(Icons.person)),
+                    leading: avatarPath != null
+                        ? CircleAvatar(
+                            backgroundImage: FileImage(File(avatarPath!)),
+                            radius: 22,
+                          )
+                        : CircleAvatar(
+                            radius: 22,
+                            backgroundColor: Colors.grey[300],
+                            child: Text(
+                              name.isNotEmpty ? name[0] : '?',
+                              style: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
+                            ),
+                          ),
                     title: const Text('Edit Profile'),
                     subtitle: const Text('Name, avatar, email'),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfilePage())),
+                    onTap: _goToProfile,
                   ),
                   // Preferences Section
                   const Padding(

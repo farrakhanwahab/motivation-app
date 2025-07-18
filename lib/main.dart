@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'services/ai_quote_service.dart';
 import 'screens/settings_screen.dart';
+import 'dart:io';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,11 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
   DateTime? lastQuoteDate;
   String? preferredTime; // format: HH:mm
+  String name = 'User Name';
+  String? avatarPath;
 
   @override
   void initState() {
     super.initState();
     _loadLastQuote();
+    _loadProfile();
   }
 
   Future<void> _loadLastQuote() async {
@@ -74,6 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
     if (preferredTime != null) {
       await prefs.setString('preferred_time', preferredTime!);
     }
+  }
+
+  Future<void> _loadProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      name = prefs.getString('profile_name') ?? name;
+      avatarPath = prefs.getString('profile_avatar');
+    });
   }
 
   bool _canGetQuoteNow() {
@@ -151,6 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const SnackBar(content: Text('Settings updated!')),
       );
     }
+    await _loadProfile();
   }
 
   @override
@@ -161,10 +174,24 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: _openSettings,
-            tooltip: 'Settings',
+          GestureDetector(
+            onTap: _openSettings,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: avatarPath != null
+                  ? CircleAvatar(
+                      backgroundImage: FileImage(File(avatarPath!)),
+                      radius: 18,
+                    )
+                  : CircleAvatar(
+                      radius: 18,
+                      backgroundColor: Colors.grey[300],
+                      child: Text(
+                        name.isNotEmpty ? name[0] : '?',
+                        style: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
+                      ),
+                    ),
+            ),
           ),
         ],
       ),
