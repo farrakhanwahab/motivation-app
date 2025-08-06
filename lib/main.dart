@@ -136,11 +136,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _getNewQuote() async {
     if (!_canGetQuoteNow()) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(preferredTime == null
-            ? 'Please set your preferred time in Settings.'
-            : 'You can only get a new quote once per day at your chosen time.')),
-      );
+      final dialogContext = context;
+      _showMessageDialog(dialogContext, preferredTime == null
+          ? 'Please set your preferred time in Settings.'
+          : 'You can only get a new quote once per day at your chosen time.');
       return;
     }
     setState(() {
@@ -156,14 +155,12 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       await _saveQuote(quote, author);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Here is your new quote!')),
-      );
+      final dialogContext = context;
+      _showMessageDialog(dialogContext, 'Here is your new quote!');
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch quote: $e')),
-      );
+      final dialogContext = context;
+      _showMessageDialog(dialogContext, 'Failed to fetch quote: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -189,9 +186,8 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       await _savePreferences();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Settings updated!')),
-      );
+      final dialogContext = context;
+      _showMessageDialog(dialogContext, 'Settings updated!');
     }
     await _loadProfile();
   }
@@ -208,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: _openSettings,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: avatarPath != null
+              child: (avatarPath != null && File(avatarPath!).existsSync())
                   ? CircleAvatar(
                       backgroundImage: FileImage(File(avatarPath!)),
                       radius: 18,
@@ -267,6 +263,30 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+void _showMessageDialog(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => Dialog(
+      backgroundColor: Colors.black,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Montserrat'),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    ),
+  );
+  Future.delayed(const Duration(milliseconds: 1700), () {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  });
 }
 
 void main() async {

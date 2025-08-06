@@ -17,14 +17,29 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   bool newPasswordVisible = false;
   bool confirmPasswordVisible = false;
 
+  void _showMessageDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _savePassword() {
     // Placeholder: Implement password change logic
     if (newPasswordController.text != confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      _showMessageDialog(context, 'Passwords do not match');
       return;
     }
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password changed!')));
+    _showMessageDialog(context, 'Password changed!');
   }
 
   @override

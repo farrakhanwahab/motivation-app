@@ -43,17 +43,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  void _showMessageDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Text(
+            message,
+            style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Montserrat'),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+    Future.delayed(const Duration(milliseconds: 1700), () {
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
   void _onThemeChanged(ThemeMode? mode) async {
     if (mode == null) return;
     setState(() {
       themeMode = mode;
     });
     await themeNotifier.setThemeMode(mode);
+    _showMessageDialog(context, 'Theme updated!');
   }
 
   Future<void> _goToProfile() async {
-    await Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfilePage()));
+    final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfilePage()));
     await _loadProfile();
+    if (!mounted) return;
+    if (result != null) {
+      _showMessageDialog(context, 'Profile updated!');
+    }
   }
 
   @override
@@ -75,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Text('Profile', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                   ListTile(
-                    leading: avatarPath != null
+                    leading: (avatarPath != null && File(avatarPath!).existsSync())
                         ? CircleAvatar(
                             backgroundImage: FileImage(File(avatarPath!)),
                             radius: 22,
@@ -102,19 +131,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     leading: const Icon(Icons.category),
                     title: const Text('Topics', style: TextStyle(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopicsPage())),
+                    onTap: () async {
+                      final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => const TopicsPage()));
+                      if (!mounted) return;
+                      if (result != null) {
+                        _showMessageDialog(context, 'Topics updated!');
+                      }
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.emoji_emotions),
                     title: const Text('Mood', style: TextStyle(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MoodPage())),
+                    onTap: () async {
+                      final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => const MoodPage()));
+                      if (!mounted) return;
+                      if (result != null) {
+                        _showMessageDialog(context, 'Mood updated!');
+                      }
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.access_time),
                     title: const Text('Preferred Time', style: TextStyle(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TimePage())),
+                    onTap: () async {
+                      final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => const TimePage()));
+                      if (!mounted) return;
+                      if (result != null) {
+                        _showMessageDialog(context, 'Preferred time updated!');
+                      }
+                    },
                   ),
                   // App Section
                   const Padding(

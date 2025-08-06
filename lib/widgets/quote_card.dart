@@ -50,6 +50,21 @@ class _QuoteCardState extends State<QuoteCard> {
     }
   }
 
+  void _showMessageDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -121,9 +136,7 @@ class _QuoteCardState extends State<QuoteCard> {
                 onPressed: () async {
                   final success = await _shareQuoteAsImage();
                   if (!success && context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Failed to share image.')),
-                    );
+                    _showMessageDialog(context, 'Failed to share image.');
                   }
                 },
               ),

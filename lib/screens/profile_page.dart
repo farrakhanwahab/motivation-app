@@ -48,6 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _saveProfile() async {
+    final dialogContext = context;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('profile_name', nameController.text);
     await prefs.setString('profile_email', email);
@@ -55,7 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
       await prefs.setString('profile_avatar', avatarPath!);
     }
     if (!mounted) return;
-    Navigator.pop(context, {'name': nameController.text, 'avatar': avatarPath});
+    Navigator.pop(dialogContext, {'name': nameController.text, 'avatar': avatarPath});
   }
 
   @override
@@ -75,17 +76,20 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         GestureDetector(
                           onTap: _pickAvatar,
-                          child: CircleAvatar(
-                            radius: 48,
-                            backgroundImage: avatarPath != null ? FileImage(File(avatarPath!)) : null,
-                            backgroundColor: Colors.grey[200],
-                            child: avatarPath == null
-                                ? Text(
+                          child: (avatarPath != null && File(avatarPath!).existsSync())
+                              ? CircleAvatar(
+                                  radius: 48,
+                                  backgroundImage: FileImage(File(avatarPath!)),
+                                  backgroundColor: Colors.grey[200],
+                                )
+                              : CircleAvatar(
+                                  radius: 48,
+                                  backgroundColor: Colors.grey[200],
+                                  child: Text(
                                     nameController.text.isNotEmpty ? nameController.text[0] : '?',
                                     style: const TextStyle(fontSize: 40, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.black),
-                                  )
-                                : null,
-                          ),
+                                  ),
+                                ),
                         ),
                         Positioned(
                           bottom: 4,
