@@ -54,6 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (avatarPath != null) {
       await prefs.setString('profile_avatar', avatarPath!);
     }
+    if (!mounted) return;
     Navigator.pop(context, {'name': nameController.text, 'avatar': avatarPath});
   }
 
@@ -114,9 +115,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     controller: nameController,
                     decoration: const InputDecoration(
                       labelText: 'Name',
-                      labelStyle: TextStyle(fontFamily: 'Montserrat'),
+                      labelStyle: TextStyle(fontFamily: 'Montserrat', fontSize: 14),
                     ),
-                    style: const TextStyle(fontFamily: 'Montserrat', fontSize: 18, fontWeight: FontWeight.w500),
+                    style: const TextStyle(fontFamily: 'Montserrat', fontSize: 14, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 20),
                   TextField(
@@ -124,12 +125,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     enabled: false,
                     decoration: const InputDecoration(
                       labelText: 'Email',
-                      labelStyle: TextStyle(fontFamily: 'Montserrat'),
+                      labelStyle: TextStyle(fontFamily: 'Montserrat', fontSize: 14),
                       disabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                     ),
-                    style: const TextStyle(fontFamily: 'Montserrat', color: Colors.grey, fontSize: 16),
+                    style: const TextStyle(fontFamily: 'Montserrat', color: Colors.grey, fontSize: 14),
                   ),
                 ],
               ),

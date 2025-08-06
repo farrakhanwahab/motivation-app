@@ -27,12 +27,12 @@ class _MoodPageState extends State<MoodPage> {
                 children: [
                   const Text(
                     'Select Your Mood',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, fontFamily: 'Montserrat'),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Montserrat'),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Choose the mood you want your quotes to match.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey, fontFamily: 'Montserrat'),
+                    style: TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Montserrat'),
                   ),
                   const SizedBox(height: 24),
                   Wrap(
@@ -46,7 +46,7 @@ class _MoodPageState extends State<MoodPage> {
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w500,
-                            fontSize: 16,
+                            fontSize: 14,
                             color: selectedMood == mood ? Colors.white : Colors.black,
                           ),
                         ),

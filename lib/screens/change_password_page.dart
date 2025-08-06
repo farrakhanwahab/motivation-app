@@ -42,6 +42,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     controller: oldPasswordController,
                     decoration: InputDecoration(
                       labelText: 'Old Password',
+                      labelStyle: const TextStyle(fontSize: 14),
                       suffixIcon: IconButton(
                         icon: Icon(oldPasswordVisible ? Icons.visibility : Icons.visibility_off),
                         onPressed: () {
@@ -51,6 +52,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         },
                       ),
                     ),
+                    style: const TextStyle(fontSize: 14),
                     obscureText: !oldPasswordVisible,
                   ),
                   const SizedBox(height: 16),
@@ -58,6 +60,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     controller: newPasswordController,
                     decoration: InputDecoration(
                       labelText: 'New Password',
+                      labelStyle: const TextStyle(fontSize: 14),
                       suffixIcon: IconButton(
                         icon: Icon(newPasswordVisible ? Icons.visibility : Icons.visibility_off),
                         onPressed: () {
@@ -67,6 +70,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         },
                       ),
                     ),
+                    style: const TextStyle(fontSize: 14),
                     obscureText: !newPasswordVisible,
                   ),
                   const SizedBox(height: 16),
@@ -74,6 +78,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     controller: confirmPasswordController,
                     decoration: InputDecoration(
                       labelText: 'Confirm New Password',
+                      labelStyle: const TextStyle(fontSize: 14),
                       suffixIcon: IconButton(
                         icon: Icon(confirmPasswordVisible ? Icons.visibility : Icons.visibility_off),
                         onPressed: () {
@@ -83,6 +88,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         },
                       ),
                     ),
+                    style: const TextStyle(fontSize: 14),
                     obscureText: !confirmPasswordVisible,
                   ),
                 ],

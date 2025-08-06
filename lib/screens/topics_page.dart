@@ -29,12 +29,12 @@ class _TopicsPageState extends State<TopicsPage> {
                 children: [
                   const Text(
                     'Select Your Topics',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, fontFamily: 'Montserrat'),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'Montserrat'),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Choose the topics you want to receive quotes about.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey, fontFamily: 'Montserrat'),
+                    style: TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Montserrat'),
                   ),
                   const SizedBox(height: 24),
                   Wrap(
@@ -54,7 +54,7 @@ class _TopicsPageState extends State<TopicsPage> {
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.w500,
-                                fontSize: 16,
+                                fontSize: 14,
                                 color: selectedTopics.contains(topic) ? Colors.white : Colors.black,
                               ),
                             ),

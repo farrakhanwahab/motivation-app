@@ -5,10 +5,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'services/quote_service.dart';
 import 'screens/settings_screen.dart';
+import 'screens/splash_screen.dart';
 import 'dart:io';
+import 'dart:async';
 
 class ThemeNotifier extends ValueNotifier<ThemeMode> {
-  ThemeNotifier(ThemeMode value) : super(value);
+  ThemeNotifier(super.value);
 
   Future<void> setThemeMode(ThemeMode mode) async {
     value = mode;
@@ -23,7 +25,6 @@ class ThemeNotifier extends ValueNotifier<ThemeMode> {
       case ThemeMode.dark:
         return 'dark';
       case ThemeMode.system:
-      default:
         return 'system';
     }
   }
@@ -47,34 +48,6 @@ class ThemeNotifier extends ValueNotifier<ThemeMode> {
 }
 
 late final ThemeNotifier themeNotifier;
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
-  themeNotifier = ThemeNotifier(await ThemeNotifier.loadThemeMode());
-  runApp(const MotivationAIApp());
-}
-
-class MotivationAIApp extends StatelessWidget {
-  const MotivationAIApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (context, mode, _) {
-        return MaterialApp(
-          title: 'Motivation',
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: mode,
-          home: const HomeScreen(),
-          debugShowCheckedModeBanner: false,
-        );
-      },
-    );
-  }
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -162,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _getNewQuote() async {
     if (!_canGetQuoteNow()) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(preferredTime == null
             ? 'Please set your preferred time in Settings.'
@@ -174,23 +148,28 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     try {
       final result = await QuoteService.fetchQuote(topics: selectedTopics, mood: selectedMood);
+      if (!mounted) return;
       setState(() {
         quote = result['quote'] ?? '';
         author = result['author'] ?? '';
         lastQuoteDate = DateTime.now();
       });
       await _saveQuote(quote, author);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Here is your new quote!')),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch quote: $e')),
       );
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -202,12 +181,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     if (result != null && result is Map) {
+      if (!mounted) return;
       setState(() {
         selectedTopics = List<String>.from(result['topics'] ?? []);
         selectedMood = result['mood'] ?? 'Any';
         preferredTime = result['time'] ?? preferredTime;
       });
       await _savePreferences();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Settings updated!')),
       );
@@ -219,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Motivation AI'),
+        title: const Text('Motivation'),
         centerTitle: true,
         elevation: 0,
         actions: [
@@ -284,6 +265,37 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
+  themeNotifier = ThemeNotifier(await ThemeNotifier.loadThemeMode());
+  runApp(const MotivationAIApp());
+}
+
+class MotivationAIApp extends StatelessWidget {
+  const MotivationAIApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (context, mode, _) {
+        return MaterialApp(
+          title: 'Motivation',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: mode,
+          home: const SplashScreen(),
+          routes: {
+            '/home': (context) => const HomeScreen(),
+          },
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }

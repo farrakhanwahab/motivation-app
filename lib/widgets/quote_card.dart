@@ -23,31 +23,30 @@ class QuoteCard extends StatefulWidget {
 class _QuoteCardState extends State<QuoteCard> {
   final GlobalKey _boundaryKey = GlobalKey();
 
-  Future<void> _shareQuoteAsImage(BuildContext context) async {
+  Future<bool> _shareQuoteAsImage() async {
+    final boundary = _boundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    if (boundary == null) {
+      return false;
+    }
     try {
-      // Wait for the widget to be rendered
       await Future.delayed(const Duration(milliseconds: 100));
-      RenderRepaintBoundary boundary = _boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       if (boundary.debugNeedsPaint) {
         await Future.delayed(const Duration(milliseconds: 100));
       }
       ui.Image image = await boundary.toImage(pixelRatio: 2.0);
       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to capture image.')),
-        );
-        return;
+        return false;
       }
       Uint8List pngBytes = byteData.buffer.asUint8List();
       final tempDir = await getTemporaryDirectory();
       final file = await File('${tempDir.path}/quote.png').create();
       await file.writeAsBytes(pngBytes);
-      await Share.shareXFiles([XFile(file.path)], text: 'Shared from Motivation AI');
+      if (!mounted) return false;
+      await Share.shareXFiles([XFile(file.path)], text: 'Shared from Motivation');
+      return true;
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to share image: $e')),
-      );
+      return false;
     }
   }
 
@@ -57,7 +56,7 @@ class _QuoteCardState extends State<QuoteCard> {
     final bgColor = isDark ? Colors.grey[900] : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black;
     final authorColor = isDark ? Colors.white70 : Colors.grey[700];
-    final shadowColor = isDark ? Colors.black.withOpacity(0.25) : Colors.black.withOpacity(0.08);
+    final shadowColor = isDark ? Colors.black.withAlpha((0.25 * 255).toInt()) : Colors.black.withAlpha((0.08 * 255).toInt());
     return RepaintBoundary(
       key: _boundaryKey,
       child: Container(
@@ -91,7 +90,7 @@ class _QuoteCardState extends State<QuoteCard> {
                   widget.quote,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontSize: 22,
+                    fontSize: 16,
                     fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.w500,
                     color: textColor,
@@ -104,7 +103,7 @@ class _QuoteCardState extends State<QuoteCard> {
                   '- ${widget.author}',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontSize: 16,
+                    fontSize: 12,
                     fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.w400,
                     color: authorColor,
@@ -119,7 +118,14 @@ class _QuoteCardState extends State<QuoteCard> {
               child: IconButton(
                 icon: Icon(Icons.share, color: isDark ? Colors.white54 : Colors.black54),
                 tooltip: 'Share',
-                onPressed: () => _shareQuoteAsImage(context),
+                onPressed: () async {
+                  final success = await _shareQuoteAsImage();
+                  if (!success && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Failed to share image.')),
+                    );
+                  }
+                },
               ),
             ),
           ],

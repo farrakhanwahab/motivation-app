@@ -10,13 +10,13 @@ class AboutPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: const [
-          Text('Motivation App', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+          Text('Motivation App', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           SizedBox(height: 8),
-          Text('Version 1.0.0'),
+          Text('Version 1.0.0', style: TextStyle(fontSize: 14)),
           SizedBox(height: 24),
-          Text('A motivational quotes app.'),
+          Text('A motivational quotes app.', style: TextStyle(fontSize: 14)),
           SizedBox(height: 24),
-          Text('Developed by Farrakhan Wahab'),
+          Text('Developed by Farrakhan Wahab', style: TextStyle(fontSize: 14)),
         ],
       ),
     );

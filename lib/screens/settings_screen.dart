@@ -72,7 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Profile Section
                   const Padding(
                     padding: EdgeInsets.fromLTRB(24, 24, 24, 8),
-                    child: Text('Profile', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                    child: Text('Profile', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                   ListTile(
                     leading: avatarPath != null
@@ -88,42 +88,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               style: const TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
                             ),
                           ),
-                    title: const Text('Edit Profile'),
-                    subtitle: const Text('Name, avatar, email'),
+                    title: const Text('Edit Profile', style: TextStyle(fontSize: 14)),
+                    subtitle: const Text('Name, avatar, email', style: TextStyle(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: _goToProfile,
                   ),
                   // Preferences Section
                   const Padding(
                     padding: EdgeInsets.fromLTRB(24, 24, 24, 8),
-                    child: Text('Preferences', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                    child: Text('Preferences', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                   ListTile(
                     leading: const Icon(Icons.category),
-                    title: const Text('Topics'),
+                    title: const Text('Topics', style: TextStyle(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopicsPage())),
                   ),
                   ListTile(
                     leading: const Icon(Icons.emoji_emotions),
-                    title: const Text('Mood'),
+                    title: const Text('Mood', style: TextStyle(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MoodPage())),
                   ),
                   ListTile(
                     leading: const Icon(Icons.access_time),
-                    title: const Text('Preferred Time'),
+                    title: const Text('Preferred Time', style: TextStyle(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TimePage())),
                   ),
                   // App Section
                   const Padding(
                     padding: EdgeInsets.fromLTRB(24, 24, 24, 8),
-                    child: Text('App', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                    child: Text('App', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                   ListTile(
                     leading: const Icon(Icons.brightness_6),
-                    title: const Text('Theme'),
+                    title: const Text('Theme', style: TextStyle(fontSize: 14)),
                     trailing: SizedBox(
                       width: 120,
                       child: DropdownButton<ThemeMode>(
@@ -131,15 +131,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         items: const [
                           DropdownMenuItem(
                             value: ThemeMode.system,
-                            child: Text('System'),
+                            child: Text('System', style: TextStyle(fontSize: 14)),
                           ),
                           DropdownMenuItem(
                             value: ThemeMode.light,
-                            child: Text('Light'),
+                            child: Text('Light', style: TextStyle(fontSize: 14)),
                           ),
                           DropdownMenuItem(
                             value: ThemeMode.dark,
-                            child: Text('Dark'),
+                            child: Text('Dark', style: TextStyle(fontSize: 14)),
                           ),
                         ],
                         onChanged: _onThemeChanged,
@@ -149,18 +149,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.info_outline),
-                    title: const Text('About'),
+                    title: const Text('About', style: TextStyle(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AboutPage())),
                   ),
                   // Account Section
                   const Padding(
                     padding: EdgeInsets.fromLTRB(24, 24, 24, 8),
-                    child: Text('Account', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                    child: Text('Account', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                   ListTile(
                     leading: const Icon(Icons.lock_outline),
-                    title: const Text('Change Password'),
+                    title: const Text('Change Password', style: TextStyle(fontSize: 14)),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChangePasswordPage())),
                   ),
