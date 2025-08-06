@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import '../theme/app_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TimePage extends StatefulWidget {
   const TimePage({super.key});
@@ -23,6 +24,29 @@ class _TimePageState extends State<TimePage> {
       time.minute,
     );
     return DateFormat('hh:mm a').format(dt); // 12-hour format
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferredTime();
+  }
+
+  Future<void> _loadPreferredTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    final timeString = prefs.getString('preferred_time');
+    if (timeString != null) {
+      final parts = timeString.split(':');
+      if (parts.length == 2) {
+        final hour = int.tryParse(parts[0]);
+        final minute = int.tryParse(parts[1]);
+        if (hour != null && minute != null) {
+          setState(() {
+            selectedTime = TimeOfDay(hour: hour, minute: minute);
+          });
+        }
+      }
+    }
   }
 
   void _showCupertinoTimePicker() {
@@ -68,13 +92,16 @@ class _TimePageState extends State<TimePage> {
                       ),
                     ),
                     CupertinoButton(
-                      onPressed: () {
+                      onPressed: () async {
                         setState(() {
                           selectedTime = TimeOfDay(
                             hour: tempPicked.hour,
                             minute: tempPicked.minute,
                           );
                         });
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('preferred_time',
+                          '${tempPicked.hour.toString().padLeft(2, '0')}:${tempPicked.minute.toString().padLeft(2, '0')}');
                         Navigator.pop(context);
                       },
                       padding: const EdgeInsets.symmetric(

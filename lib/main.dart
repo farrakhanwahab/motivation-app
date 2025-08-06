@@ -8,6 +8,8 @@ import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
 import 'dart:io';
 import 'dart:async';
+import 'screens/login_screen.dart';
+import 'screens/signup_screen.dart';
 
 class ThemeNotifier extends ValueNotifier<ThemeMode> {
   ThemeNotifier(super.value);
@@ -93,15 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
     await prefs.setString('last_quote_date', DateTime.now().toIso8601String());
   }
 
-  Future<void> _savePreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('selected_topics', selectedTopics);
-    await prefs.setString('selected_mood', selectedMood);
-    if (preferredTime != null) {
-      await prefs.setString('preferred_time', preferredTime!);
-    }
-  }
-
   Future<void> _loadProfile() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -171,24 +164,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _openSettings() async {
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const SettingsScreen(),
       ),
     );
-    if (result != null && result is Map) {
-      if (!mounted) return;
-      setState(() {
-        selectedTopics = List<String>.from(result['topics'] ?? []);
-        selectedMood = result['mood'] ?? 'Any';
-        preferredTime = result['time'] ?? preferredTime;
-      });
-      await _savePreferences();
-      if (!mounted) return;
-      final dialogContext = context;
-      _showMessageDialog(dialogContext, 'Settings updated!');
-    }
+    await _loadLastQuote(); // This will reload preferredTime from SharedPreferences
     await _loadProfile();
   }
 
@@ -199,6 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Motivation'),
         centerTitle: true,
         elevation: 0,
+        automaticallyImplyLeading: false,
         actions: [
           GestureDetector(
             onTap: _openSettings,
@@ -311,6 +294,8 @@ class MotivationAIApp extends StatelessWidget {
           themeMode: mode,
           home: const SplashScreen(),
           routes: {
+            '/login': (context) => const LoginScreen(),
+            '/signup': (context) => const SignupScreen(),
             '/home': (context) => const HomeScreen(),
           },
           debugShowCheckedModeBanner: false,

@@ -85,6 +85,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.black,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Are you sure you want to logout?',
+                style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Montserrat'),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancel', style: TextStyle(color: Colors.white, fontFamily: 'Montserrat')),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: () async {
+                      // Clear user data (profile, preferences, etc.)
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.clear();
+                      if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+                      // Navigate to login
+                      if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacementNamed('/login');
+                    },
+                    child: const Text('Logout', style: TextStyle(fontFamily: 'Montserrat')),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,7 +209,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: () async {
                       final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => const TimePage()));
                       if (!mounted) return;
-                      if (result != null) {
+                      if (result != null && result['time'] != null) {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('preferred_time', result['time']);
                         _showMessageDialog(context, 'Preferred time updated!');
                       }
                     },
@@ -223,17 +276,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: Implement logout logic
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Logout'),
-                        content: const Text('Logout functionality coming soon.'),
-                        actions: [
-                          TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
-                        ],
-                      ),
-                    );
+                    _showLogoutDialog(context);
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   child: const Text('Logout'),
