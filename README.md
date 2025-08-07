@@ -22,6 +22,7 @@ An app that delivers daily motivational quotes tailored to your preferences.
 <a href="https://github.com/farrakhanwahab/motivation-app/releases/download/v1.0.0/Motivation_v1.0.0.apk">
   <img src="https://img.shields.io/github/v/release/farrakhanwahab/motivation-app?style=for-the-badge&logo=android&logoColor=white&label=Download%20APK&color=3DDC84" alt="Download APK">
 </a>
+
 1. Download the latest APK from the link above
 2. Enable "Install from Unknown Sources" in your Android settings
 3. Install the APK file
