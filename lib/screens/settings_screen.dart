@@ -106,26 +106,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel', style: TextStyle(color: Colors.white, fontFamily: 'Montserrat')),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.white),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text('Cancel', style: TextStyle(color: Colors.white, fontFamily: 'Montserrat')),
                     ),
-                    onPressed: () async {
-                      // Clear user data (profile, preferences, etc.)
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.clear();
-                      if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-                      // Navigate to login
-                      if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-                      Navigator.of(context).pushReplacementNamed('/login');
-                    },
-                    child: const Text('Logout', style: TextStyle(fontFamily: 'Montserrat')),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      onPressed: () async {
+                        // Clear user data (profile, preferences, etc.)
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.clear();
+                        if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+                        // Navigate to login
+                        if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacementNamed('/login');
+                      },
+                      child: const Text('Logout', style: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold)),
+                    ),
                   ),
                 ],
               ),
