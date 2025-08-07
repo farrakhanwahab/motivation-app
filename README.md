@@ -5,10 +5,7 @@ An app that delivers daily motivational quotes tailored to your preferences.
 ## Features
 
 - **Daily Motivational Quotes:** Get a new quote every day, powered by ZenQuotes API.
-- **User Preferences:**
-  - Select topics, mood, and preferred time for your daily quote
-  - Edit your profile (name, avatar)
-  - Choose light, dark, or system theme
+- **User Preferences:** Choose topics, mood, and preferred notification time; Edit name, avatar, and select light, dark, or system theme.
 - **Persistent Storage:** All preferences and profile info are saved using SharedPreferences.
 - **Shareable Quote Cards:** Share quote images with friends.
 - **Modern Dialogs:** All feedback dialogs are black with white text, auto-dismiss, and consistent across the app.
@@ -20,7 +17,7 @@ An app that delivers daily motivational quotes tailored to your preferences.
 ## Download & Installation
 ### Android
 <a href="https://github.com/farrakhanwahab/motivation-app/releases/download/v1.0.0/Motivation_v1.0.0.apk">
-  <img src="https://img.shields.io/github/v/release/farrakhanwahab/motivation-app?style=for-the-badge&logo=android&logoColor=white&label=Download%20APK&color=3DDC84" alt="Download APK">
+  <img src="https://img.shields.io/badge/Download-APK%20v1.0.0-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Download APK">
 </a>
 
 1. Download the latest APK from the link above
