@@ -1,4 +1,4 @@
-# Motivation APP
+# Motivation App
 
 An app that delivers daily motivational quotes tailored to your preferences.
 
